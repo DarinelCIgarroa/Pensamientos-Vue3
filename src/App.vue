@@ -1,26 +1,29 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="container-sm col-6">
+    <div class="row">
+      <div class="col my-3">
+        <mis-pensamientos/>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import MisPensamientos from "@/components/MisPensamientos.vue"
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
+  components: { 
+    MisPensamientos
+  },
+  name: 'App', 
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+.container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
