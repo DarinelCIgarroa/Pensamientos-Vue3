@@ -1,29 +1,30 @@
 <template>
-  <div class="container-sm col-6">
-    <div class="row">
-      <div class="col my-3">
-        <mis-pensamientos/>
-      </div>
-    </div>
+  <div id="nav">
+    <router-link to="/">Home</router-link> |
+    <router-link to="/Login">Login</router-link>
   </div>
+  <router-view/>
 </template>
 
-<script>
-import MisPensamientos from "@/components/MisPensamientos.vue"
-
-export default {
-  components: { 
-    MisPensamientos
-  },
-  name: 'App', 
-}
-</script>
-
 <style>
-@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-.container{
-  display: flex;
-  justify-content: center;
-  align-items: center;
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>

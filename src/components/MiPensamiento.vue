@@ -98,7 +98,6 @@ export default {
         confirmButtonText: `Actualizar`,
         denyButtonText: `Cancelar cambios`,
       }).then((result) => {
-        /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
           Swal.fire("¡Actualizado!", "", "success");
           editMode.value = false;
@@ -108,7 +107,7 @@ export default {
           editMode.value = false;
         }
       });
-    };
+    }
 
     const cancelar = () => {
       editMode.value = false;

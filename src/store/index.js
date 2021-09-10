@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { createStore } from 'vuex'
-import { Global } from '../../Global'
+import { Global } from '../composables/Global'
 import Swal from "sweetalert2"
 
 export default createStore({
@@ -26,8 +26,9 @@ export default createStore({
   actions: {
     async getPensamientos({ commit }) {
       const response = await axios.get(Global.url + 'pensamientos');
+    
       if (response.status == 200) {
-        commit('setPensamiento', response.data)   
+        commit('setPensamiento', response.data.data)
       }else{
         Swal.fire({
           icon: 'error',
@@ -39,7 +40,7 @@ export default createStore({
     async addPensamiento({ commit }, payload) {
       const response = await axios.post(Global.url + 'pensamientos',payload);
       if(response.status == 201){
-        commit("addPensamiento",response.data)
+        commit("addPensamiento",response.data.pensamiento)
         Swal.fire({
           position: 'top-end',
           icon: 'success',
@@ -58,7 +59,7 @@ export default createStore({
     async deletePensamiento({ commit }, payload) {
       const response = await axios.delete(Global.url + "pensamientos" + `/${payload}`);
       if (response.status == 200) {
-        commit('deletePensamiento', response.data)
+        commit('deletePensamiento', response.data.pensamiento)
       }else{
         Swal.fire({
           icon: 'error',
@@ -70,7 +71,7 @@ export default createStore({
     async updatePensamiento({commit}, payload,){
       const response = await axios.put(Global.url + 'pensamientos' + `/${payload.id}`, payload)
       if(response.status == 200){
-        commit('updatePensamiento', response.data)
+        commit('updatePensamiento', response.data.pensamiento)
       }else{
         Swal.fire({
           icon: 'error',
