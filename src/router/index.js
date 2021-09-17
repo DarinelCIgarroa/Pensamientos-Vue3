@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 
+import middleware from './middleware'
+
 const routes = [
   {
     path: '/',
@@ -10,7 +12,14 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/Login.vue')
+    component: () => import('@/views/Login.vue'),
+    beforeEnter: middleware.guest,
+  },
+  {
+    path: '/pensamientos',
+    name: 'Pensamientos',
+    component: () => import('@/views/UserPensamientos.vue'),
+    beforeEnter: middleware.user
   }
 
 ]

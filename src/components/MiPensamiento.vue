@@ -56,6 +56,7 @@
       {{ pensamiento.updated_at }}
     </div>
   </div>
+ 
 </template>
 
 <script>
@@ -69,7 +70,7 @@ export default {
   props: {
     pensamiento: {
       type: Object,
-      Requied: true,
+      Required: true,
     },
   },
   setup(props) {
@@ -90,7 +91,7 @@ export default {
       editMode.value = true;
     };
 
-    const updatePensamiento = () => {
+    const updatePensamiento =  async () => {
       Swal.fire({
         title: "¿Quieres guardar los cambios?",
         showDenyButton: true,

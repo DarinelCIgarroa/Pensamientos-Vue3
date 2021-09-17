@@ -23,6 +23,7 @@
       <button class="btn btn-primary" @click="addPensamiento">Publicar</button>
     </div>
   </div>
+  
 </template>
 
 <script>
@@ -34,16 +35,17 @@ export default {
   name: "CrearPensamiento",
   setup() {
     const store = useStore();
+    const user =  JSON.parse(localStorage.getItem("user"))
     const data = reactive({
       title: "",
       description: "",
+      user_id: user.id
     });
 
     const addPensamiento = () => {
       store.dispatch("addPensamiento", data);
       data.title = "";
       data.description = "";
-      
     };
 
     return { ...toRefs(data), addPensamiento };

@@ -10,6 +10,13 @@
             <a href="#" class="social"><fa :icon="['fab', 'google']" /></a>
             <a href="#" class="social"><fa :icon="['fab', 'instagram']" /></a>
           </div>
+          <div v-if="loading" class="lds-dual-ring"></div>
+          <p v-if="errors" class="error">
+            <ul>
+              <li v-for="error in errors" :key="error" style="color: red">{{ error[0] }}</li>
+            </ul>
+          </p>
+          <strong v-if="success" style="color: green;">{{ success }}</strong>
           <span>O use su correo electrónico para registrarse</span>
           <input v-model="name" type="text" placeholder="Nombre" />
           <input v-model="email" type="email" placeholder="Correo" />
@@ -26,6 +33,12 @@
             <a href="#" class="social"><fa :icon="['fab', 'instagram']" /></a>
           </div>
           <span>O use su correo electrónico para registrarse</span>
+          <div v-if="loading" class="lds-dual-ring"></div>
+          <p v-if="errors" class="error">
+            <ul>
+              <li v-for="error in errors" :key="error" style="color: red">{{ error[0] }}</li>
+            </ul>
+          </p>
           <input v-model="email" type="email" placeholder="Correo" />
           <input v-model="password" type="password" placeholder="Contraseña" />
           <a href="#">¿Olvidaste tú contraseña?</a>
@@ -58,37 +71,92 @@
 </template>
 
 <script>
-import useLogin from "@/composables/useLogin";
-import { reactive, toRefs } from '@vue/reactivity';
-import axios from 'axios'
-import {Global} from '@/composables/Global';
+// import useLogin from "@/composables/useLogin";
+import { reactive, toRefs, ref } from "@vue/reactivity";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import repository from "@/api/repository";
 export default {
   setup() {
+    // Importando para usar las rutas
+    const router = useRouter();
+    // Importamos metodos del login
+    // const { signUp, signIn } = useLogin();
+    // Importamos para usar invocar la tienda
+    const store = useStore();
+
     const data = reactive({
       name: "",
       email: "",
-      password: ""
+      password: "",
     });
 
-    const { signUp, signIn } = useLogin();
+    const errors = ref(null);
+    const success = ref(null);
+    const loading = ref(false);
 
-    const login = () => {
-      axios.post(Global.url + 'login', data)
-        .then(response => console.log(response))
-        .catch(errors => {
-          console.log(errors.response.data.errors.email[0])
-        })
-    }
-    const register = () => {
-      axios.post(Global.url + 'register', data)
-        .then(response => console.log(response))
-        .catch(error => {
-          console.error(error)
-        })
-
+    const signUp = () => {
+      errors.value = "";
+      data.name = "";
+      data.email = "";
+      data.password = "";
+      const container = document.getElementById("container");
+      container.classList.add("right-panel-active");
     };
 
-    return { signUp, signIn, login, register, ...toRefs(data) };
+    const signIn = () => {
+      errors.value = "";
+      data.name = "";
+      data.email = "";
+      data.password = "";
+      const container = document.getElementById("container");
+      container.classList.remove("right-panel-active");
+    };
+
+    const login = async () => {
+      errors.value = null;
+      loading.value = true;
+      try {
+        await store.dispatch("login", data);
+        await router.push({ name: "Pensamientos" });
+      } catch (errorRes) {
+        if (errorRes.response.status == 422) {
+          errors.value = errorRes.response.data.errors;
+        }
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    const register = async () => {
+      errors.value = null;
+      loading.value = true;
+      try {
+        const response = await repository.register(data);
+        if (response.status === 201) {
+          success.value = response.data.msg;
+          data.name = "";
+          data.email = "";
+          data.password = "";
+        }
+      } catch (error) {
+        if (error.response.status === 422) {
+          errors.value = error.response.data.errors;
+        }
+      } finally {
+        loading.value = false;
+      }
+    };
+    return {
+      signUp,
+      signIn,
+      login,
+      register,
+      errors,
+      success,
+      loading,
+      ...toRefs(data),
+    };
   },
 };
 </script>
@@ -193,7 +261,10 @@ input {
   margin: 8px 0;
   width: 100%;
 }
-
+.error {
+  margin: 0px;
+  padding: 0px;
+}
 .container {
   background-color: #fff;
   border-radius: 10px;
@@ -202,7 +273,7 @@ input {
   overflow: hidden;
   width: 768px;
   max-width: 100%;
-  min-height: 480px;
+  min-height: 490px;
 }
 
 .form-container {
@@ -330,5 +401,30 @@ input {
   margin: 0 5px;
   height: 40px;
   width: 40px;
+}
+/* Loading */
+.lds-dual-ring {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 50px;
+  height: 50px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid black;
+  border-color: black transparent black transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
